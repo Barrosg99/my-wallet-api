@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const { set } = require('../src/app');
 const app = require('../src/app');
 const pool = require('../src/database/DB_config');
 
