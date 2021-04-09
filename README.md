@@ -159,13 +159,7 @@ A API do My Wallet é composta pelas seguintes rotas:
     npm i
     ```
 
-7. Rode as migrations
-
-    ```bash
-    npx sequilize-cli db:migrate
-    ```
-
-8. Rode a aplicação 🙂
+7. Rode a aplicação 🙂
 
     ```bash
     npm run dev
