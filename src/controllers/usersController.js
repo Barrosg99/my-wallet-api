@@ -1,6 +1,11 @@
 const userSchemas = require('../schemas/usersSchemas');
-const usersRepositories = require('../repositories/usersRepositories');
-const sessionsRepositories = require('../repositories/sessionsRepositories');
+
+const RepositoryFactory = require("../repositories");
+
+
+
+const usersRepositories = RepositoryFactory.createRepository('user');
+const sessionsRepositories = RepositoryFactory.createRepository("session");
 
 
 async function postSignUp(req, res) {
