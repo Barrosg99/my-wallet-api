@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13-alpine
+    container_name: my-wallet-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_DATABASE:-mywallet}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my-wallet-network
+
+  api:
+    build: .
+    container_name: my-wallet-api
+    environment:
+      PORT: ${PORT:-3000}
+      SRV_PORT: ${SRV_PORT:-3000}
+      DB_USER: ${DB_USER:-postgres}
+      DB_HOST: db
+      DB_PORT: ${DB_PORT:-5432}
+      DB_DATABASE: ${DB_DATABASE:-mywallet}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my-wallet-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  my-wallet-network:
+    driver: bridge
